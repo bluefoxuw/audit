@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+int main() {
+FILE * fp;
+fp = fopen("sample.txt", "r");
+if (fp == NULL) {
+printf("Failed to open file\n");
+return 1;
+}
+printf("File opened successfully\n");
+sleep(15);
+fclose(fp);
+return 0;
+}

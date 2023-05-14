@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#define MAX_COMMAND_LENGTH 1024
+#define MAX_ARGS 32
+// Function to count the number of characters in a file
+void count_chars(char * filename) {
+FILE * fp = fopen(filename, "r");
+if (fp == NULL) {
+printf("Error: File not found\n");
+return;
+}
+fseek(fp, 0, SEEK_END);
+long size = ftell(fp);
+fclose(fp);
+printf("Number of characters in file %s: %ld\n", filename, size);
+}
+// Function to count the number of words in a file
+void count_words(char * filename) {
+FILE * fp = fopen(filename, "r");
+if (fp == NULL) {
+printf("Error: File not found\n");
+return;
+}
+int word_count = 0;
+int in_word = 0;
+int c;
+while ((c = fgetc(fp)) != EOF) {
+if (c == ' ' || c == '\t' || c == '\n') {
+in_word = 0;
+} else if (!in_word) {
+in_word = 1;
+word_count++;
+}
+}
+fclose(fp);
+printf("Number of words in file %s: %d\n", filename, word_count);
+}
+// Function to count the number of lines in a file
+void count_lines(char * filename) {
+FILE * fp = fopen(filename, "r");
+if (fp == NULL) {
+printf("Error: File not found\n");
+return;
+}
+int line_count = 0;
+int c;
+while ((c = fgetc(fp)) != EOF) {
+if (c == '\n') {
+line_count++;
+}
+}
+fclose(fp);
+printf("Number of lines in file %s: %d\n", filename, line_count);
+}
+int main() {
+char command[MAX_COMMAND_LENGTH];
+char * args[MAX_ARGS];
+int num_args;
+while (1) {
+printf("NewShell$ ");
+fgets(command, MAX_COMMAND_LENGTH, stdin);
+// Remove newline character from the end of the command string
+command[strlen(command) - 1] = '\0';
+// Tokenize the command string to get the arguments
+char * token = strtok(command, " ");
+num_args = 0;
+while (token != NULL && num_args < MAX_ARGS - 1) {
+args[num_args] = token;
+num_args++;
+token = strtok(NULL, " ");
+}
+args[num_args] = NULL;
+if (num_args == 0) {
+// Empty command, do nothing
+continue;
+}
+if (strcmp(args[0], "exit") == 0) {
+// Exit command, exit the shell
+break;
+}
+if (strcmp(args[0], "count") == 0 && num_args == 3) {
+// Handle custom count commands
+if (strcmp(args[1], "c") == 0) {
+count_chars(args[2]);
+} else if (strcmp(args[1], "w") == 0) {
+count_words(args[2]);
+} else if (strcmp(args[1], "l") == 0) {
+count_lines(args[2]);
+} else {
+printf("Error: Invalid count command\n");
+}
+} else {
+// Normal shell command, fork a child process to execute it
+pid_t pid = fork();
+if (pid == -1) {
+printf("Error: Fork failed\n");
+continue;
+} else if (pid == 0) {
+// Child process
+execvp(args[0], args);
+// If execvp returns, there was an error
+printf("Error: Command not found\n");
+exit(1);
+} else {
+// Parent process, wait for child to finish
+int status;
+waitpid(pid, & status, 0);
+}
+}
+}
+}

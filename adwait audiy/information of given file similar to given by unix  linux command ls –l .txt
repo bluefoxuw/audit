@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <sys/stat.h>
+#include <stdlib.h>
+#include <time.h>
+#include <pwd.h>
+#include <grp.h>
+int main(int argc, char * argv[]) {
+struct stat fileStat;
+if (argc < 2) {
+fprintf(stderr, "Usage: %s <file>\n", argv[0]);
+exit(EXIT_FAILURE);
+}
+if (stat(argv[1], & fileStat) < 0) {
+perror("stat");
+exit(EXIT_FAILURE);
+}
+// File permissions
+printf((S_ISDIR(fileStat.st_mode)) ? "d" : "-");
+printf((fileStat.st_mode & S_IRUSR) ? "r" : "-");
+printf((fileStat.st_mode & S_IWUSR) ? "w" : "-");
+printf((fileStat.st_mode & S_IXUSR) ? "x" : "-");
+printf((fileStat.st_mode & S_IRGRP) ? "r" : "-");
+printf((fileStat.st_mode & S_IWGRP) ? "w" : "-");
+printf((fileStat.st_mode & S_IXGRP) ? "x" : "-");
+printf((fileStat.st_mode & S_IROTH) ? "r" : "-");
+printf((fileStat.st_mode & S_IWOTH) ? "w" : "-");
+printf((fileStat.st_mode & S_IXOTH) ? "x" : "-");
+// Number of links
+printf(" %ld", fileStat.st_nlink);
+// Owner name
+printf(" %s", getpwuid(fileStat.st_uid) -> pw_name);
+// Group name
+printf(" %s", getgrgid(fileStat.st_gid) -> gr_name);
+// File size
+printf(" %ld", fileStat.st_size);
+// Last modified time
+struct tm * tm = localtime( & fileStat.st_mtime);
+char modifiedTime[20];
+strftime(modifiedTime, sizeof(modifiedTime), "%b %d %H:%M", tm);
+printf(" %s", modifiedTime);
+// File name
+printf(" %s\n", argv[1]);
+return 0;
+}

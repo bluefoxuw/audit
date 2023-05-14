@@ -1,0 +1,76 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+volatile sig_atomic_t flag = 0;
+void sighandler(int signum) {
+switch (signum) {
+case SIGHUP:
+printf("Child received SIGHUP\n");
+break;
+case SIGINT:
+printf("Child received SIGINT\n");
+break;
+case SIGQUIT:
+printf("Child received SIGQUIT\n");
+printf("My DADDY has Killed me!!!\n");
+exit(0);
+break;
+}
+}
+int main() {
+pid_t pid;
+int status;
+struct sigaction sa;
+pid = fork();
+if (pid == -1) {
+perror("fork");
+exit(1);
+} else if (pid == 0) { // child process
+printf("Child process created with PID %d\n", getpid());
+sa.sa_handler = sighandler;
+sigemptyset( & sa.sa_mask);
+sa.sa_flags = 0;
+if (sigaction(SIGHUP, & sa, NULL) == -1) {
+perror("sigaction");
+exit(1);
+}
+if (sigaction(SIGINT, & sa, NULL) == -1) {
+perror("sigaction");
+exit(1);
+}
+if (sigaction(SIGQUIT, & sa, NULL) == -1) {
+perror("sigaction");
+exit(1);
+}
+while (1) {
+sleep(1);
+if (flag) {
+break;
+}
+}
+exit(0);
+} else { // parent process
+printf("Parent process created with PID %d\n", getpid());
+// send SIGHUP or SIGINT signal every 3 seconds
+for (int i = 0; i < 10; i++) {
+sleep(3);
+if (i % 2 == 0) {
+kill(pid, SIGHUP);
+} else {
+kill(pid, SIGINT);
+}
+}
+// send SIGQUIT signal to child after 30 seconds
+sleep(30);
+kill(pid, SIGQUIT);
+// wait for child to terminate
+wait( & status);
+if (WIFEXITED(status)) {
+printf("Child process exited with status %d\n", WEXITSTATUS(status));
+}
+}
+return 0;
+}

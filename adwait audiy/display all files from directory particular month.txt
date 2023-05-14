@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/wait.h>
+int main() {
+int fd[2]; // file descriptors for the pipe
+pid_t pid_ls, pid_wc; // process IDs for ls and wc
+if (pipe(fd) < 0) { // create pipe
+perror("pipe error");
+exit(1);
+}
+// fork first child for ls command
+if ((pid_ls = fork()) < 0) {
+perror("fork error");
+exit(1);
+} else if (pid_ls == 0) { // child process
+close(fd[0]); // close read end of pipe
+dup2(fd[1], STDOUT_FILENO); // redirect stdout to write end of pipe
+execlp("ls", "ls", "-l", NULL); // execute ls command
+perror("exec error");
+exit(1);
+}
+// fork second child for wc command
+if ((pid_wc = fork()) < 0) {
+perror("fork error");
+exit(1);
+} else if (pid_wc == 0) { // child process
+close(fd[1]); // close write end of pipe
+dup2(fd[0], STDIN_FILENO); // redirect stdin to read end of pipe
+execlp("wc", "wc", "-l", NULL); // execute wc command
+perror("exec error");
+exit(1);
+}
+close(fd[0]); // close unused read end of pipe
+close(fd[1]); // close unused write end of pipe
+// wait for both child processes to complete
+waitpid(pid_ls, NULL, 0);
+waitpid(pid_wc, NULL, 0);
+return 0;
+}

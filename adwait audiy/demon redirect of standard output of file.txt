@@ -1,0 +1,11 @@
+#include <stdio.h>
+int main() {
+FILE * fp;
+// Open a file for writing
+fp = freopen("program23.txt", "w", stdout);
+// Print some text
+printf("Hello, world!\n");
+// Close the file
+fclose(fp);
+return 0;
+}

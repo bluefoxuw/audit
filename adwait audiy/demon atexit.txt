@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include <stdlib.h>
+void cleanup1() {
+printf("Cleanup 1\n");
+}
+void cleanup2() {
+printf("Cleanup 2\n");
+}
+int main() {
+atexit(cleanup1);
+atexit(cleanup2);
+printf("Hello, world!\n");
+return 0;
+}

@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <unistd.h>
+#include <signal.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+int main() {
+// Block signals Ctrl-C and Ctrl-\
+sigset_t mask;
+sigemptyset( & mask);
+sigaddset( & mask, SIGINT);
+sigaddset( & mask, SIGQUIT);
+sigprocmask(SIG_BLOCK, & mask, NULL);
+// Create pipe
+int pipefd[2];
+if (pipe(pipefd) == -1) {
+perror("pipe");
+exit(EXIT_FAILURE);
+}
+// Create child process 1 for ls -l
+pid_t ls_pid = fork();
+if (ls_pid == -1) {
+perror("fork");
+exit(EXIT_FAILURE);
+}
+if (ls_pid == 0) {
+// Child process 1
+close(pipefd[0]); // Close unused read end of pipe
+dup2(pipefd[1], STDOUT_FILENO); // Redirect stdout to pipe
+execlp("ls", "ls", "-l", NULL);
+perror("exec ls");
+exit(EXIT_FAILURE);
+}
+// Create child process 2 for wc -l
+pid_t wc_pid = fork();
+if (wc_pid == -1) {
+perror("fork");
+exit(EXIT_FAILURE);
+}
+if (wc_pid == 0) {
+// Child process 2
+close(pipefd[1]); // Close unused write end of pipe
+dup2(pipefd[0], STDIN_FILENO); // Redirect stdin to pipe
+execlp("wc", "wc", "-l", NULL);
+perror("exec wc");
+exit(EXIT_FAILURE);
+}
+// Close both ends of the pipe in the parent process
+close(pipefd[0]);
+close(pipefd[1]);
+// Wait for child processes to complete
+int status;
+waitpid(ls_pid, & status, 0);
+if (WIFEXITED(status)) {
+printf("ls exited with status %d\n", WEXITSTATUS(status));
+}
+waitpid(wc_pid, & status, 0);
+if (WIFEXITED(status)) {
+printf("wc exited with status %d\n", WEXITSTATUS(status));
+}
+// Unblock signals
+sigprocmask(SIG_UNBLOCK, & mask, NULL);
+return 0;
+}

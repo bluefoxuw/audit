@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+int main(int argc,
+const char *
+const * argv) {
+if (argc != 2) {
+printf("Usage: %s <file_name>\n", argv[0]);
+return 1;
+}
+const char * file_name = argv[1];
+const char * extension = strrchr(file_name, '.');
+if (extension == NULL) {
+printf("File type cannot be determined.\n");
+return 1;
+}
+switch (tolower(extension[1])) {
+case 't':
+printf("Text file.\n");
+break;
+case 'd':
+if (strcmp(extension, ".doc") == 0 ||
+strcmp(extension, ".docx") == 0) {
+printf("Microsoft Word document.\n");
+} else {
+printf("File type not recognized.\n");
+}
+break;
+case 'p':
+if (strcmp(extension, ".pdf") == 0) {
+printf("PDF document.\n");
+} else {
+printf("File type not recognized.\n");
+}
+break;
+default:
+printf("File type not recognized.\n");
+break;
+}
+return 0;
+}
