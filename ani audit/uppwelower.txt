@@ -1,0 +1,113 @@
+activity_main
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <EditText
+        android:id="@+id/inputEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter input string"
+        android:inputType="text" />
+
+    <RadioGroup
+        android:id="@+id/transformationRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/inputEditText"
+        android:orientation="vertical" >
+
+        <RadioButton
+            android:id="@+id/uppercaseRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Uppercase" />
+
+        <RadioButton
+            android:id="@+id/lowercaseRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lowercase" />
+
+        <RadioButton
+            android:id="@+id/right5RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Right 5 characters" />
+
+        <RadioButton
+            android:id="@+id/left5RadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Left 5 characters" />
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/applyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/transformationRadioGroup"
+        android:onClick="applyTransformation"
+        android:text="Apply Transformation" />
+
+    <TextView
+        android:id="@+id/outputTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/applyButton"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+</RelativeLayout>
+
+
+
+Mainactivity.java
+
+package com.example.radiobuttonuppercaselowercase;
+import androidx.appcompat.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.TextView;
+
+public class MainActivity extends AppCompatActivity {
+    private EditText inputEditText;
+    private RadioButton uppercaseRadioButton;
+    private RadioButton lowercaseRadioButton;
+    private RadioButton right5RadioButton;
+    private RadioButton left5RadioButton;
+    private TextView outputTextView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        inputEditText = findViewById(R.id.inputEditText);
+        uppercaseRadioButton = findViewById(R.id.uppercaseRadioButton);
+        lowercaseRadioButton = findViewById(R.id.lowercaseRadioButton);
+        right5RadioButton = findViewById(R.id.right5RadioButton);
+        left5RadioButton = findViewById(R.id.left5RadioButton);
+        outputTextView = findViewById(R.id.outputTextView);
+    }
+
+    public void applyTransformation(View view) {
+        String input = inputEditText.getText().toString();
+        if (input.isEmpty()) {
+            return;
+        }
+        if (uppercaseRadioButton.isChecked()) {
+            input = input.toUpperCase();
+        } else if (lowercaseRadioButton.isChecked()) {
+            input = input.toLowerCase();
+        } else if (right5RadioButton.isChecked()) {
+            input = input.substring(input.length() - 5);
+        } else if (left5RadioButton.isChecked()) {
+            input = input.substring(0, 5);
+        }
+        outputTextView.setText(input);
+    }
+}
