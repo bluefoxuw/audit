@@ -1,0 +1,54 @@
+#include <stdio.h>
+
+#define INPUT_SIZE 3
+#define LEARNING_RATE 0.1
+#define EPOCHS 10
+
+void hebb_learning_rule(int input[][INPUT_SIZE], int output[], double weights[]) {
+    int epoch, i, j;
+
+    for (epoch = 0; epoch < EPOCHS; epoch++) {
+        printf("Epoch %d:\n", epoch + 1);
+
+        for (i = 0; i < INPUT_SIZE; i++) {
+            double sum = 0.0;
+
+            for (j = 0; j < INPUT_SIZE; j++) {
+                sum += input[i][j] * weights[j];
+            }
+
+            int y = (sum >= 0) ? 1 : -1;
+
+            if (y != output[i]) {
+                for (j = 0; j < INPUT_SIZE; j++) {
+                    weights[j] += LEARNING_RATE * output[i] * input[i][j];
+                }
+            }
+
+            printf("Output[%d]: %d\n", i, y);
+        }
+        printf("\n");
+    }
+
+    printf("Final Weights: ");
+    for (i = 0; i < INPUT_SIZE; i++) {
+        printf("%.2f ", weights[i]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int input[][INPUT_SIZE] = {
+        {1, -1, 1},
+        {1, 1, -1},
+        {-1, 1, 1}
+    };
+
+    int output[] = {1, 1, 1};
+
+    double weights[INPUT_SIZE] = {0};
+
+    hebb_learning_rule(input, output, weights);
+
+    return 0;
+}

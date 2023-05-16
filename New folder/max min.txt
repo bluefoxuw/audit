@@ -1,0 +1,63 @@
+#include <stdio.h>
+#include <limits.h>
+#include <stdlib.h>
+
+void max_min_composition(int matrix1[][2], int matrix2[][2], int result[][2], int m1_rows, int m1_cols, int m2_rows, int m2_cols) {
+    int i, j, k, max_value, min_value;
+    for (i = 0; i < m1_rows; i++) {
+        for (j = 0; j < m2_cols; j++) {
+            max_value = INT_MIN;
+            for (k = 0; k < m1_cols; k++) {
+                min_value = matrix1[i][k] < matrix2[k][j] ? matrix1[i][k] : matrix2[k][j];
+                if (min_value > max_value) {
+                    max_value = min_value;
+                }
+            }
+            result[i][j] = max_value;
+        }
+    }
+}
+
+void max_product_composition(int matrix1[][2], int matrix2[][2], int result[][2], int m1_rows, int m1_cols, int m2_rows, int m2_cols) {
+    int i, j, k, max_product, product;
+    for (i = 0; i < m1_rows; i++) {
+        for (j = 0; j < m2_cols; j++) {
+            max_product = INT_MIN;
+            for (k = 0; k < m1_cols; k++) {
+                product = matrix1[i][k] * matrix2[k][j];
+                if (product > max_product) {
+                    max_product = product;
+                }
+            }
+            result[i][j] = max_product;
+        }
+    }
+}
+
+int main() {
+    int matrix1[2][2] = {{1, 2}, {3, 4}};
+    int matrix2[2][2] = {{5, 6}, {7, 8}};
+    int result[2][2];
+    
+    // Max-Min Composition
+    max_min_composition(matrix1, matrix2, result, 2, 2, 2, 2);
+    printf("Max-Min Composition:\n");
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            printf("%d ", result[i][j]);
+        }
+        printf("\n");
+    }
+    
+    // Max-Product Composition
+    max_product_composition(matrix1, matrix2, result, 2, 2, 2, 2);
+    printf("Max-Product Composition:\n");
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            printf("%d ", result[i][j]);
+        }
+        printf("\n");
+    }
+    
+    return 0;
+}

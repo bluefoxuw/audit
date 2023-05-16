@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+#define NUM_FEATURES 2
+#define NUM_SAMPLES 4
+#define LEARNING_RATE 0.1
+#define MAX_ITERATIONS 1000
+
+typedef struct {
+    float x[NUM_FEATURES];
+    int label;
+} Sample;
+
+float sigmoid(float z) {
+    return 1.0 / (1.0 + exp(-z));
+}
+
+float dot_product(float *weights, float *inputs) {
+    float result = 0.0;
+    for (int i = 0; i < NUM_FEATURES; i++) {
+        result += weights[i] * inputs[i];
+    }
+    return result;
+}
+
+void update_weights(float *weights, float *inputs, float error) {
+    for (int i = 0; i < NUM_FEATURES; i++) {
+        weights[i] += LEARNING_RATE * error * inputs[i];
+    }
+}
+
+float train_logistic_regression(float *weights, Sample *samples) {
+    float cost = 0.0;
+
+    for (int i = 0; i < MAX_ITERATIONS; i++) {
+        float sum_cost = 0.0;
+
+        for (int j = 0; j < NUM_SAMPLES; j++) {
+            float sum = dot_product(weights, samples[j].x);
+            float output = sigmoid(sum);
+            float error = samples[j].label - output;
+
+            for (int k = 0; k < NUM_FEATURES; k++) {
+                weights[k] += LEARNING_RATE * error * samples[j].x[k];
+            }
+
+            sum_cost += error * error;
+        }
+
+        cost = sum_cost / NUM_SAMPLES;
+
+        if (cost < 0.001) {
+            printf("Converged after %d iterations\n", i + 1);
+            return cost;
+        }
+    }
+
+    printf("Failed to converge after %d iterations\n", MAX_ITERATIONS);
+    return cost;
+}
+
+int main() {
+    float weights[NUM_FEATURES] = {0.0};
+    Sample samples[NUM_SAMPLES] = {
+        {{0.5, 0.5}, 1},
+        {{-0.5, 0.5}, 0},
+        {{0.5, -0.5}, 0},
+        {{-0.5, -0.5}, 0}
+    };
+
+    float cost = train_logistic_regression(weights, samples);
+
+    printf("Learned weights: %f %f\n", weights[0], weights[1]);
+    printf("Final cost: %f\n", cost);
+
+    return 0;
+}

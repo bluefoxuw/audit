@@ -1,0 +1,101 @@
+#include <iostream>
+#include <cmath>
+#include <cstdlib>
+#include <ctime>
+using namespace std;
+const int numInput = 1;
+const int numHidden = 3;
+const int numOutput = 1;
+double alpha = 0.25;
+double w1[numInput][numHidden], w2[numHidden][numOutput];
+double hidden[numHidden], output[numOutput];
+double deltaOutput[numOutput], deltaHidden[numHidden];
+void initializeWeights()
+{
+srand((unsigned)time(NULL));
+for (int i = 0; i < numInput; ++i)
+for (int j = 0; j < numHidden; ++j)
+w1[i][j] = ((double)rand() / RAND_MAX) - 0.5;
+for (int i = 0; i < numHidden; ++i)
+for (int j = 0; j < numOutput; ++j)
+w2[i][j] = ((double)rand() / RAND_MAX) - 0.5;
+}
+void feedForward(double x)
+{
+double sum;
+// Calculate hidden layer values
+for (int i = 0; i < numHidden; ++i)
+{
+sum = 0.0;
+for (int j = 0; j < numInput; ++j)
+sum += w1[j][i] * x;
+hidden[i] = tanh(sum);
+}
+// Calculate output layer values
+for (int i = 0; i < numOutput; ++i)
+{
+sum = 0.0;
+for (int j = 0; j < numHidden; ++j)
+sum += w2[j][i] * hidden[j];
+output[i] = tanh(sum);
+}
+}
+void backPropagate(double x, double target)
+{
+double sum;
+// Calculate output layer deltas
+for (int i = 0; i < numOutput; ++i)
+deltaOutput[i] = (target - output[i]) * (1 - pow(output[i], 2));
+// Calculate hidden layer deltas
+for (int i = 0; i < numHidden; ++i)
+{
+sum = 0.0;
+for (int j = 0; j < numOutput; ++j)
+sum += deltaOutput[j] * w2[i][j];
+deltaHidden[i] = (1 - pow(hidden[i], 2)) * sum;
+}
+// Update output layer weights
+for (int i = 0; i < numHidden; ++i)
+for (int j = 0; j < numOutput; ++j)
+w2[i][j] += alpha * deltaOutput[j] * hidden[i];
+// Update hidden layer weights
+for (int i = 0; i < numInput; ++i)
+for (int j = 0; j < numHidden; ++j)
+w1[i][j] += alpha * deltaHidden[j] * x;
+}
+void train()
+{
+double x, target;
+cout << "Enter input: ";
+cin >> x;
+cout << "Enter target: ";
+cin >> target;
+feedForward(x);
+backPropagate(x, target);
+}
+void test()
+{
+double x;
+cout << "Enter input: ";
+cin >> x;
+feedForward(x);
+cout << "Output: ";
+cout << output[0] << endl;
+}
+int main()
+{
+initializeWeights();
+char choice;
+cout << "Enter 't' to train or 'e' to test: ";
+cin >> choice;
+while(choice == 't' || choice == 'e')
+{
+if(choice == 't')
+train();
+else if(choice == 'e')
+test();
+cout << "Enter 't' to train or 'e' to test: ";
+cin >> choice;
+}
+return 0;
+}

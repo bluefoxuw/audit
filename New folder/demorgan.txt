@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+int main() {
+    int x = 5, y = 10;
+    int result1, result2;
+    
+    // De Morgan's Law
+    result1 = !(x > 5 || y < 10);
+    result2 = !x <= 5 && !y >= 10;
+    
+    printf("Result 1: %d\n", result1);
+    printf("Result 2: %d\n", result2);
+    
+    return 0;
+}

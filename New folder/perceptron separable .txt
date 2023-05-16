@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define NUM_SAMPLES 4
+#define NUM_FEATURES 3
+#define LEARNING_RATE 0.1
+#define MAX_ITERATIONS 100
+
+typedef struct {
+    float x[NUM_FEATURES];
+    int label;
+} Sample;
+
+float dot_product(float *weights, float *inputs) {
+    float result = 0.0;
+    for (int i = 0; i < NUM_FEATURES; i++) {
+        result += weights[i] * inputs[i];
+    }
+    return result;
+}
+
+int activation_function(float sum) {
+    if (sum >= 0.0)
+        return 1;
+    else
+        return -1;
+}
+
+void update_weights(float *weights, float *inputs, int error) {
+    for (int i = 0; i < NUM_FEATURES; i++) {
+        weights[i] += LEARNING_RATE * error * inputs[i];
+    }
+}
+
+int train_perceptron(float *weights, Sample *samples) {
+    int iterations = 0;
+    int errors = 0;
+
+    while (iterations < MAX_ITERATIONS) {
+        errors = 0;
+
+        for (int i = 0; i < NUM_SAMPLES; i++) {
+            float sum = dot_product(weights, samples[i].x);
+            int output = activation_function(sum);
+            int error = samples[i].label - output;
+
+            if (error != 0) {
+                update_weights(weights, samples[i].x, error);
+                errors++;
+            }
+        }
+
+        if (errors == 0) {
+            printf("Converged after %d iterations\n", iterations);
+            return 1;
+        }
+
+        iterations++;
+    }
+
+    printf("Failed to converge after %d iterations\n", MAX_ITERATIONS);
+    return 0;
+}
+
+int main() {
+    float weights[NUM_FEATURES] = {0.0};
+    Sample samples[NUM_SAMPLES] = {
+        {{0.5, 0.5, 1.0}, 1},
+        {{-0.5, 0.5, 1.0}, -1},
+        {{0.5, -0.5, 1.0}, -1},
+        {{-0.5, -0.5, 1.0}, -1}
+    };
+
+    if (train_perceptron(weights, samples)) {
+        printf("Weights: ");
+        for (int i = 0; i < NUM_FEATURES; i++) {
+            printf("%f ", weights[i]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}

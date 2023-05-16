@@ -1,0 +1,57 @@
+#include <stdio.h>
+#include <math.h>
+
+#define INPUT_SIZE 2
+#define HIDDEN_SIZE 2
+#define OUTPUT_SIZE 1
+
+double sigmoid(double x) {
+    return 1 / (1 + exp(-x));
+}
+
+void feed_forward(double input[], double weights_ih[][HIDDEN_SIZE], double bias_h[],
+                  double weights_ho[][OUTPUT_SIZE], double bias_o[], double output[]) {
+    // Calculate hidden layer output
+    double hidden[HIDDEN_SIZE];
+    for (int i = 0; i < HIDDEN_SIZE; i++) {
+        double sum = 0;
+        for (int j = 0; j < INPUT_SIZE; j++) {
+            sum += input[j] * weights_ih[j][i];
+        }
+        sum += bias_h[i];
+        hidden[i] = sigmoid(sum);
+    }
+
+    // Calculate output layer output
+    for (int i = 0; i < OUTPUT_SIZE; i++) {
+        double sum = 0;
+        for (int j = 0; j < HIDDEN_SIZE; j++) {
+            sum += hidden[j] * weights_ho[j][i];
+        }
+        sum += bias_o[i];
+        output[i] = sigmoid(sum);
+    }
+}
+
+int main() {
+    // Initialize weights and biases
+    double weights_ih[INPUT_SIZE][HIDDEN_SIZE] = {{0.1, 0.2},
+                                                  {0.3, 0.4}};
+    double bias_h[HIDDEN_SIZE] = {0.5, 0.6};
+
+    double weights_ho[HIDDEN_SIZE][OUTPUT_SIZE] = {{0.7},
+                                                   {0.8}};
+    double bias_o[OUTPUT_SIZE] = {0.9};
+
+    // Define input
+    double input[INPUT_SIZE] = {0.3, 0.7};
+
+    // Perform feed-forward operation
+    double output[OUTPUT_SIZE];
+    feed_forward(input, weights_ih, bias_h, weights_ho, bias_o, output);
+
+    // Print output
+    printf("Output: %.4f\n", output[0]);
+
+    return 0;
+}

@@ -1,0 +1,16 @@
+#include <stdio.h>
+#include <math.h>
+
+double sigmoid(double x) {
+    return 1 / (1 + exp(-x));
+}
+
+int main() {
+    double input = 0.5;
+    double output = sigmoid(input);
+    
+    printf("Input: %.2f\n", input);
+    printf("Output (Sigmoid): %.4f\n", output);
+    
+    return 0;
+}
