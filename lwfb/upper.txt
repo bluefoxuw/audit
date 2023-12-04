@@ -1,0 +1,16 @@
+// Import the built-in 'readline' module
+const readline = require('readline');
+// Create a readline interface for reading user input
+const rl = readline.createInterface({
+input: process.stdin,
+output: process.stdout
+});
+// Ask the user for input
+rl.question('Enter a string: ', (input) => {
+// Convert the input to uppercase
+const upperCaseString = input.toUpperCase();
+// Display the uppercase string
+console.log(`Uppercase: ${upperCaseString}`);
+// Close the readline interface
+rl.close();
+});

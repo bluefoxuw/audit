@@ -1,0 +1,13 @@
+Program:
+const EventEmitter = require('events');
+// Creating an event emitter instance
+const eventEmitter = new EventEmitter();
+// Event listener for custom event 'myEvent'
+eventEmitter.on('myEvent', () => {
+console.log('My event has been triggered');
+});
+// Main loop that listens for events
+setInterval(() => {
+// Simulating an event trigger
+eventEmitter.emit('myEvent');
+}, 2000);

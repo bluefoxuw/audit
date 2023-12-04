@@ -1,0 +1,17 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.model_selection import train_test_split
+from sklearn.cluster import AgglomerativeClustering
+from sklearn.datasets import make_blobs
+ns=200
+nf=2
+nc=3
+rs=42
+X,_ =make_blobs(n_samples=nc,n_features=nf,centers=nc,random_state=rs)
+
+Agg=AgglomerativeClustering(n_clusters=nc,linkage="ward")
+l=Agg.fit_predict(X)
+
+plt.figure(figsize=(5,6))
+plt.scatter(X[:,0],X[:,1],c="black")
+plt.show()

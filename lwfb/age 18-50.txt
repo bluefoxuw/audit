@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Student Registration</title>
+ <script>
+ function validateForm() {
+ // Get input values
+ var firstName = document.forms["registrationForm"]["firstName"].value;
+ var lastName = document.forms["registrationForm"]["lastName"].value;
+ var age = document.forms["registrationForm"]["age"].value;
+ // Regular expression to match only alphabets
+ var alphabetPattern = /^[A-Za-z]+$/;
+ // Check if first name contains only alphabets
+ if (!firstName.match(alphabetPattern)) {
+ alert("First name should contain only alphabets.");
+ return false;
+ }
+ // Check if last name contains only alphabets
+ if (!lastName.match(alphabetPattern)) {
+ alert("Last name should contain only alphabets.");
+ return false;
+ }
+ // Check if age is between 18 and 50
+ if (isNaN(age) || age < 18 || age > 50) {
+ alert("Age should be between 18 and 50.");
+ return false;
+ }
+ return true;
+ }
+ </script>
+</head>
+<body>
+ <h2>Student Registration</h2>
+ <form name="registrationForm" onsubmit="return validateForm()" method="post">
+ <label for="firstName">First Name:</label>
+ <input type="text" id="firstName" name="firstName" required><br><br>
+ <label for="lastName">Last Name:</label>
+ <input type="text" id="lastName" name="lastName" required><br><br>
+ <label for="age">Age:</label>
+ <input type="number" id="age" name="age" required><br><br>
+ <input type="submit" value="Register">
+ </form>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+ <title>Employee Registration</title>
+ <script>
+ function validateForm() {
+ // Get input values
+ var dob = document.forms["registrationForm"]["dob"].value;
+ var joiningDate = document.forms["registrationForm"]["joiningDate"].value;
+ var salary = document.forms["registrationForm"]["salary"].value;
+ // Regular expressions for date formats (YYYY-MM-DD)
+ var dateFormatPattern = /^\d{4}-\d{2}-\d{2}$/;
+ // Check DOB format
+ if (!dob.match(dateFormatPattern)) {
+ alert("DOB should be in YYYY-MM-DD format.");
+ return false;
+ }
+ // Check Joining Date format
+ if (!joiningDate.match(dateFormatPattern)) {
+ alert("Joining Date should be in YYYY-MM-DD format.");
+ return false;
+ }
+ // Check if DOB is before Joining Date
+ var dobDate = new Date(dob);
+ var joiningDateDate = new Date(joiningDate);
+ if (dobDate >= joiningDateDate) {
+ alert("DOB should be before Joining Date.");
+ return false;
+ }
+ // Check Salary is a valid number
+ if (isNaN(salary) || salary <= 0) {
+ alert("Salary should be a positive number.");
+ return false;
+ }
+ return true;
+ }
+ </script>
+</head>
+<body>
+ <h2>Employee Registration</h2>
+ <form name="registrationForm" onsubmit="return validateForm()" method="post">
+ <label for="dob">Date of Birth (YYYY-MM-DD):</label>
+ <input type="text" id="dob" name="dob" required><br><br>
+ <label for="joiningDate">Joining Date (YYYY-MM-DD):</label>
+ <input type="text" id="joiningDate" name="joiningDate" required><br><br>
+ <label for="salary">Salary:</label>
+ <input type="text" id="salary" name="salary" required><br><br>
+ <input type="submit" value="Register">
+ </form>
+</body>
+</html>

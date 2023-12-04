@@ -1,0 +1,36 @@
+public class ThreadSafeSingleton {
+
+    // Private static instance variable
+    private static volatile ThreadSafeSingleton instance;
+
+    // Private constructor to prevent instantiation
+    private ThreadSafeSingleton() {
+        // initialization code, if any
+    }
+
+    // Public method to get the singleton instance
+    public static ThreadSafeSingleton getInstance() {
+        if (instance == null) {
+            // Use double-checked locking to ensure thread safety
+            synchronized (ThreadSafeSingleton.class) {
+                if (instance == null) {
+                    instance = new ThreadSafeSingleton();
+                }
+            }
+        }
+        return instance;
+    }
+
+    // Other methods of the singleton class, if any
+}
+
+// Example of how to use the singleton
+class SingletonExample {
+    public static void main(String[] args) {
+        // Get the singleton instance
+        ThreadSafeSingleton singleton = ThreadSafeSingleton.getInstance();
+
+        // Use the singleton instance
+        System.out.println("Singleton instance hash code: " + System.identityHashCode(singleton));
+    }
+}

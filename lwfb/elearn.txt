@@ -1,0 +1,74 @@
+const http = require('http');
+const fs = require('fs');
+const url = require('url');
+const querystring = require('querystring');
+const courses = [
+{name:"Web framework"},
+{name:"Machine Learning"},
+{name:"Big Data"},
+{name:"Operating System"}];
+const users = [{id: 1,username: "user1",password: "password1",},
+{id: 2, username: "user2", password: "password2",},];
+const server = http.createServer((req, res) => {
+const parsedUrl = url.parse(req.url, true);
+const pathname = parsedUrl.pathname;
+if (req.method === 'GET') {
+if (pathname === '/') {
+const courseList = courses.map(course => `<li>${course.name}</li>`).join('');
+const homepage = `
+<html>
+<head>
+<title>eLearning System</title>
+</head>
+<body>
+<h1>Welcome to the eLearning System</h1>
+<h2>Courses:</h2>
+<ul>
+${courseList}
+</ul>
+<a href="/login">Login</a>
+</body>
+</html>
+`;
+res.writeHead(200, { 'Content-Type': 'text/html' });
+res.end(homepage);
+} else if (pathname === '/login') {
+const loginForm = `
+<html>
+<head>
+<title>Login</title>
+</head>
+<body>
+<h1>Login</h1>
+<form action="/login" method="POST">
+<label for="username">Username:</label>
+<input type="text" id="username" name="username" required>
+<br>
+<label for="password">Password:</label>
+<input type="password" id="password" name="password" required>
+<br>
+<button type="submit">Login</button>
+</form>
+</body>
+</html>
+`;
+res.writeHead(200, { 'Content-Type': 'text/html' });
+res.end(loginForm);
+}} else if (req.method === 'POST') {
+if (pathname === '/login') {
+let body = '';
+req.on('data', (chunk) => {
+body += chunk.toString();});
+req.on('end', () => {
+const { username, password } = querystring.parse(body);
+const user = users.find((user) => user.username === username);
+if (user && user.password === password) {
+res.writeHead(302, { 'Location': '/' });
+res.end();
+} else {res.writeHead(401, { 'Content-Type': 'text/plain' });
+res.end('Invalid username or password');
+}});}} else {res.writeHead(404, { 'Content-Type': 'text/plain' });
+res.end('Not Found');}});
+const PORT = process.env.PORT || 8082;
+server.listen(PORT, () => {
+console.log(`Server is running on port ${PORT}`);});

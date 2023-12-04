@@ -1,0 +1,49 @@
+const http = require('http');
+const url = require('url');
+const querystring = require('querystring');
+const bcrypt = require('bcrypt');
+const users = [];
+const server = http.createServer((req, res) => {
+const { pathname, query } = url.parse(req.url, true);
+if (pathname === '/' && req.method === 'GET') {
+res.writeHead(200, { 'Content-Type': 'text/html' });
+res.end(`
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+<body>
+<h1>Login</h1>
+<form action="/login" method="POST">
+<label for="username">Username:</label>
+<input type="text" id="username" name="username" required>
+<br>
+<label for="password">Password:</label>
+<input type="password" id="password" name="password" required>
+<br>
+<button type="submit">Login</button>
+</form>
+</body>
+</html>
+`);
+} else if (pathname === '/login' && req.method === 'POST') {
+let body = '';
+req.on('data', (chunk) => {
+body += chunk.toString();
+});
+req.on('end', () => {
+const { username, password } = querystring.parse(body);
+const user = users.find((user) => user.username === username);
+if (user && bcrypt.compareSync(password, user.password)) {
+res.writeHead(200, { 'Content-Type': 'text/plain' });
+res.end('Login successful!');
+} else {
+res.writeHead(401, { 'Content-Type': 'text/plain' });
+res.end('Invalid username or password');
+}});} else {res.writeHead(404, { 'Content-Type': 'text/plain' });
+res.end('Not Found');}});
+const PORT = process.env.PORT || 3003;
+server.listen(PORT, () => {
+console.log(`Server is running on port ${PORT}`);});

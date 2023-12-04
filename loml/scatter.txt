@@ -1,0 +1,9 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.datasets import load_iris
+
+data=load_iris()
+data1=data.data
+df=pd.DataFrame(data1,columns=iris.feature_names)
+plt.scatter(x=df[('sepal length (cm)')],y=df[('sepal width (cm)')])
+plt.show()

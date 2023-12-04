@@ -1,0 +1,136 @@
+// HeartModel interface representing the heart model
+interface HeartModel {
+    int getHeartRate();
+    void registerObserver(BeatObserver observer);
+    void removeObserver(BeatObserver observer);
+    void registerObserver(BPMObserver observer);
+    void removeObserver(BPMObserver observer);
+    void notifyObservers();
+}
+
+// BeatObserver interface for observing beat events
+interface BeatObserver {
+    void updateBeat();
+}
+
+// BPMObserver interface for observing BPM (beats per minute) events
+interface BPMObserver {
+    void updateBPM();
+}
+
+// BeatModel class representing the beat model
+class BeatModel {
+    private int beatsPerMinute;
+    private BeatObserver beatObserver;
+    private BPMObserver bpmObserver;
+
+    public void setBeatsPerMinute(int beatsPerMinute) {
+        this.beatsPerMinute = beatsPerMinute;
+        notifyObservers();
+    }
+
+    public void registerObserver(BeatObserver observer) {
+        this.beatObserver = observer;
+    }
+
+    public void removeObserver(BeatObserver observer) {
+        this.beatObserver = null;
+    }
+
+    public void registerObserver(BPMObserver observer) {
+        this.bpmObserver = observer;
+    }
+
+    public void removeObserver(BPMObserver observer) {
+        this.bpmObserver = null;
+    }
+
+    public void notifyObservers() {
+        if (beatObserver != null) {
+            beatObserver.updateBeat();
+        }
+        if (bpmObserver != null) {
+            bpmObserver.updateBPM();
+        }
+    }
+
+    public int getBeatsPerMinute() {
+        return beatsPerMinute;
+    }
+}
+
+// Adapter class to adapt BeatModel to HeartModel
+class HeartModelAdapter implements HeartModel {
+    private BeatModel beatModel;
+
+    public HeartModelAdapter(BeatModel beatModel) {
+        this.beatModel = beatModel;
+    }
+
+    @Override
+    public int getHeartRate() {
+        // Adapt beats per minute to heart rate
+        return beatModel.getBeatsPerMinute() / 4;
+    }
+
+    @Override
+    public void registerObserver(BeatObserver observer) {
+        beatModel.registerObserver(observer);
+    }
+
+    @Override
+    public void removeObserver(BeatObserver observer) {
+        beatModel.removeObserver(observer);
+    }
+
+    @Override
+    public void registerObserver(BPMObserver observer) {
+        beatModel.registerObserver(observer);
+    }
+
+    @Override
+    public void removeObserver(BPMObserver observer) {
+        beatModel.removeObserver(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        beatModel.notifyObservers();
+    }
+}
+
+// Client class
+public class AdapterPatternExample {
+    public static void main(String[] args) {
+        // Create a BeatModel
+        BeatModel beatModel = new BeatModel();
+
+        // Create an adapter to adapt BeatModel to HeartModel
+        HeartModel heartModel = new HeartModelAdapter(beatModel);
+
+        // Register observers
+        beatModel.registerObserver(new BeatObserverImpl());
+        beatModel.registerObserver(new BPMObserverImpl());
+        heartModel.registerObserver(new BeatObserverImpl());
+        heartModel.registerObserver(new BPMObserverImpl());
+
+        // Simulate changes in the beat model
+        beatModel.setBeatsPerMinute(120);
+    }
+
+    // Concrete implementation of BeatObserver
+    static class BeatObserverImpl implements BeatObserver {
+        @Override
+        public void updateBeat() {
+            System.out.println("BeatObserver: Beat event received");
+        }
+    }
+
+    // Concrete implementation of BPMObserver
+    static class BPMObserverImpl implements BPMObserver {
+        @Override
+        public void updateBPM() {
+            System.out.println("BPMObserver: BPM event received");
+        }
+    }
+}

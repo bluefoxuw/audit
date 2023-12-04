@@ -1,0 +1,44 @@
+import java.io.*;
+
+class LowercaseInputStream extends FilterInputStream {
+
+    protected LowercaseInputStream(InputStream in) {
+        super(in);
+    }
+
+    @Override
+    public int read() throws IOException {
+        int c = super.read();
+        return (c == -1 ? c : Character.toLowerCase((char) c));
+    }
+
+    @Override
+    public int read(byte[] b, int offset, int len) throws IOException {
+        int result = super.read(b, offset, len);
+        for (int i = offset; i < offset + result; i++) {
+            b[i] = (byte) Character.toLowerCase((char) b[i]);
+        }
+        return result;
+    }
+}
+
+public class IODecoratorExample {
+    public static void main(String[] args) {
+        try {
+            InputStream inputStream = new LowercaseInputStream(System.in);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+
+            System.out.println("Enter text (type 'exit' to end):");
+
+            String line;
+            while (!(line = bufferedReader.readLine()).equalsIgnoreCase("exit")) {
+                System.out.println("Converted: " + line);
+            }
+
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}

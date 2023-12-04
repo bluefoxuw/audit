@@ -1,0 +1,20 @@
+import pandas as pd
+
+# Create a sample dataset with null values
+data = {'A': [1, 2, None, 4, 5],
+        'B': [None, 2, 3, 4, 5],
+        'C': [1, 2, 3, None, 5]}
+
+# Create a DataFrame from the dataset
+df = pd.DataFrame(data)
+
+# Find and display the null values in the DataFrame
+print("Original DataFrame:")
+print(df)
+
+# Find and remove null values
+df_cleaned = df.dropna()
+
+# Display the DataFrame after removing null values
+print("\nDataFrame after removing null values:")
+print(df_cleaned)

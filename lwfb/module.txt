@@ -1,0 +1,15 @@
+Program module.js
+const getDateTime = () => {
+const currentDate = new Date();
+return currentDate.toUTCString();
+};
+module.exports = { getDateTime };
+Script.js
+const http = require('http');
+const myModule = require('./modules');
+http.createServer((req, res) => {
+res.writeHead(200, { 'Content-Type': 'text/plain' });
+res.write(`Current Date and Time: ${myModule.getDateTime()}`);
+res.end();
+}).listen(8071);
+console.log('Server is running at http://localhost:8071/');

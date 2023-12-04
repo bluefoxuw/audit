@@ -1,0 +1,91 @@
+// Command interface
+interface Command {
+    void execute();
+}
+
+// Concrete command for turning a device on
+class TurnOnCommand implements Command {
+    private Device device;
+
+    public TurnOnCommand(Device device) {
+        this.device = device;
+    }
+
+    @Override
+    public void execute() {
+        device.turnOn();
+    }
+}
+
+// Concrete command for turning a device off
+class TurnOffCommand implements Command {
+    private Device device;
+
+    public TurnOffCommand(Device device) {
+        this.device = device;
+    }
+
+    @Override
+    public void execute() {
+        device.turnOff();
+    }
+}
+
+// Receiver interface
+interface Device {
+    void turnOn();
+    void turnOff();
+}
+
+// Concrete receiver representing a light
+class Light implements Device {
+    @Override
+    public void turnOn() {
+        System.out.println("Light is ON");
+    }
+
+    @Override
+    public void turnOff() {
+        System.out.println("Light is OFF");
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+}
+
+// Client class
+public class CommandPatternExample {
+    public static void main(String[] args) {
+        // Create devices
+        Light light = new Light();
+
+        // Create commands for turning the light on and off
+        Command turnOnCommand = new TurnOnCommand(light);
+        Command turnOffCommand = new TurnOffCommand(light);
+
+        // Create a remote control
+        RemoteControl remoteControl = new RemoteControl();
+
+        // Set commands in the remote control
+        remoteControl.setCommand(turnOnCommand);
+
+        // Press the button to turn the light on
+        remoteControl.pressButton();
+
+        // Set a different command in the remote control
+        remoteControl.setCommand(turnOffCommand);
+
+        // Press the button to turn the light off
+        remoteControl.pressButton();
+    }
+}

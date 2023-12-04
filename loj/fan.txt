@@ -1,0 +1,109 @@
+// Command interface
+interface Command {
+    void execute();
+    void undo();
+}
+
+// Receiver class
+class CeilingFan {
+    private boolean isOn;
+
+    public void turnOn() {
+        isOn = true;
+        System.out.println("Ceiling fan is ON");
+    }
+
+    public void turnOff() {
+        isOn = false;
+        System.out.println("Ceiling fan is OFF");
+    }
+
+    public boolean isOn() {
+        return isOn;
+    }
+}
+
+// Concrete command for turning the ceiling fan on
+class TurnOnCommand implements Command {
+    private CeilingFan ceilingFan;
+
+    public TurnOnCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+
+    @Override
+    public void execute() {
+        ceilingFan.turnOn();
+    }
+
+    @Override
+    public void undo() {
+        ceilingFan.turnOff();
+    }
+}
+
+// Concrete command for turning the ceiling fan off
+class TurnOffCommand implements Command {
+    private CeilingFan ceilingFan;
+
+    public TurnOffCommand(CeilingFan ceilingFan) {
+        this.ceilingFan = ceilingFan;
+    }
+
+    @Override
+    public void execute() {
+        ceilingFan.turnOff();
+    }
+
+    @Override
+    public void undo() {
+        ceilingFan.turnOn();
+    }
+}
+
+// Invoker class
+class RemoteControl {
+    private Command command;
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+
+    public void pressButton() {
+        command.execute();
+    }
+
+    public void pressUndoButton() {
+        command.undo();
+    }
+}
+
+// Client class
+public class UndoCommandPatternExample {
+    public static void main(String[] args) {
+        // Create a ceiling fan
+        CeilingFan ceilingFan = new CeilingFan();
+
+        // Create commands for turning the ceiling fan on and off
+        Command turnOnCommand = new TurnOnCommand(ceilingFan);
+        Command turnOffCommand = new TurnOffCommand(ceilingFan);
+
+        // Create a remote control
+        RemoteControl remoteControl = new RemoteControl();
+
+        // Set commands in the remote control
+        remoteControl.setCommand(turnOnCommand);
+
+        // Press the button to turn the ceiling fan on
+        remoteControl.pressButton();
+
+        // Set a different command in the remote control
+        remoteControl.setCommand(turnOffCommand);
+
+        // Press the button to turn the ceiling fan off
+        remoteControl.pressButton();
+
+        // Press the undo button to undo the last command
+        remoteControl.pressUndoButton();
+    }
+}

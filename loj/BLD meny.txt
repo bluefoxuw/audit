@@ -1,0 +1,147 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+// MenuItem class representing individual menu items
+class MenuItem {
+    private String name;
+    private String description;
+    private double price;
+
+    public MenuItem(String name, String description, double price) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    @Override
+    public String toString() {
+        return name + " - " + description + " - $" + price;
+    }
+}
+
+// Menu interface with iterator method
+interface Menu {
+    Iterator<MenuItem> createIterator();
+}
+
+// Concrete BreakfastMenu implementing Menu interface
+class BreakfastMenu implements Menu {
+    private List<MenuItem> items;
+
+    public BreakfastMenu() {
+        items = new ArrayList<>();
+        addItem("Pancakes", "Fluffy pancakes with syrup", 5.99);
+        addItem("Omelette", "Cheese and vegetable omelette", 7.99);
+        addItem("Fruit Salad", "Assorted fresh fruits", 4.49);
+    }
+
+    public void addItem(String name, String description, double price) {
+        MenuItem menuItem = new MenuItem(name, description, price);
+        items.add(menuItem);
+    }
+
+    @Override
+    public Iterator<MenuItem> createIterator() {
+        return items.iterator();
+    }
+}
+
+// Concrete LunchMenu implementing Menu interface
+class LunchMenu implements Menu {
+    private MenuItem[] items;
+    private int numberOfItems;
+
+    public LunchMenu() {
+        items = new MenuItem[3];
+        addItem("Chicken Sandwich", "Grilled chicken with lettuce and mayo", 8.99);
+        addItem("Caesar Salad", "Romaine lettuce with Caesar dressing", 6.49);
+        addItem("Soup of the Day", "Chef's special soup", 4.99);
+    }
+
+    public void addItem(String name, String description, double price) {
+        if (numberOfItems < items.length) {
+            MenuItem menuItem = new MenuItem(name, description, price);
+            items[numberOfItems] = menuItem;
+            numberOfItems++;
+        } else {
+            System.out.println("Menu is full. Cannot add more items.");
+        }
+    }
+
+    @Override
+    public Iterator<MenuItem> createIterator() {
+        return new LunchMenuIterator(items);
+    }
+}
+
+// Concrete iterator for LunchMenu
+class LunchMenuIterator implements Iterator<MenuItem> {
+    private MenuItem[] items;
+    private int position = 0;
+
+    public LunchMenuIterator(MenuItem[] items) {
+        this.items = items;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return position < items.length && items[position] != null;
+    }
+
+    @Override
+    public MenuItem next() {
+        MenuItem menuItem = items[position];
+        position++;
+        return menuItem;
+    }
+}
+
+// Waitress class that uses the iterator to print menu items
+class Waitress {
+    private Menu breakfastMenu;
+    private Menu lunchMenu;
+
+    public Waitress(Menu breakfastMenu, Menu lunchMenu) {
+        this.breakfastMenu = breakfastMenu;
+        this.lunchMenu = lunchMenu;
+    }
+
+    public void printMenu() {
+        System.out.println("Breakfast Menu:");
+        printMenu(breakfastMenu.createIterator());
+
+        System.out.println("\nLunch Menu:");
+        printMenu(lunchMenu.createIterator());
+    }
+
+    private void printMenu(Iterator<MenuItem> iterator) {
+        while (iterator.hasNext()) {
+            MenuItem menuItem = iterator.next();
+            System.out.println(menuItem);
+        }
+    }
+}
+
+// Client class
+public class IteratorPatternExample {
+    public static void main(String[] args) {
+        Menu breakfastMenu = new BreakfastMenu();
+        Menu lunchMenu = new LunchMenu();
+
+        Waitress waitress = new Waitress(breakfastMenu, lunchMenu);
+        waitress.printMenu();
+    }
+}

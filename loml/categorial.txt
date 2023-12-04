@@ -1,0 +1,5 @@
+import pandas as pd
+data={'CATEGORY':['A','B','C','D']}
+df=pd.DataFrame(data)
+df['Category_numeric'],unique_categories=pd.factorize(df['CATEGORY'])
+print(df)

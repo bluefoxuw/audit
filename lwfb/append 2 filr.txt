@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>File Appender</title>
+</head>
+<body>
+ <h1>Append Contents of First File into Second File</h1>
+ <form action="/append" method="post">
+ <label for="file1">Enter the name of the first file:</label>
+ <input type="text" id="file1" name="file1" required><br><br>
+ <label for="file2">Enter the name of the second file:</label>
+ <input type="text" id="file2" name="file2" required><br><br>
+ <input type="submit" value="Append">
+ </form>
+</body>
+</html>

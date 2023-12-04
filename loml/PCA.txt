@@ -1,0 +1,20 @@
+import numpy as np
+from sklearn.decomposition import PCA
+
+data = np.array([
+    [1.0, 2.0, 3.0],
+    [4.0, 5.0, 6.0],
+    [7.0, 8.0, 9.0],
+    [10.0, 11.0, 12.0]
+])
+
+model=PCA(n_components=3)
+
+transformed_data=model.fit_transform(data)
+
+print("Okay,here is how the original data looked like:")
+print(data)
+print("\n And here is the transformed data:")
+print(transformed_data)
+print("\n Also here is the PCA explained variance ratio:")
+print(model.explained_variance_ratio_)

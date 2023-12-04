@@ -1,0 +1,23 @@
+import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+from sklearn.datasets import make_blobs
+
+ns=500
+nf=2
+nc=5
+random_state=42
+
+X,_=make_blobs(n_samples=ns,n_features=nf,centers=nc,random_state=random_state)
+
+
+
+K=KMeans(n_clusters=nc,random_state=random_state)
+K.fit(X)
+labels=K.labels_
+cc=K.cluster_centers_
+plt.figure(figsize=(8,6))
+plt.scatter(X[:,0],X[:,1],c='black')
+plt.scatter(cc[:,0],cc[:,1],c='y')
+plt.show()
